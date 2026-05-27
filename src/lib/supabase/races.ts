@@ -4,8 +4,10 @@ import type { Database } from "@/lib/supabase/types";
 
 type RaceRow = Database["public"]["Tables"]["races"]["Row"];
 type DistanceRow = Database["public"]["Tables"]["race_distances"]["Row"];
+type SourceRow = Database["public"]["Tables"]["race_sources"]["Row"];
 type RaceWithDistances = RaceRow & {
   race_distances: DistanceRow[];
+  race_sources?: SourceRow[];
 };
 
 export type RaceQueryResult<T> =
@@ -17,7 +19,7 @@ export async function getVerifiedRaceRecords(): Promise<RaceQueryResult<BackendR
     const supabase = getSupabaseServerClient();
     const { data, error } = await supabase
       .from("races")
-      .select("*, race_distances(*)")
+      .select("*, race_distances(*), race_sources(*)")
       .eq("verification_status", "verified")
       .order("race_date", { ascending: true });
 
@@ -36,7 +38,7 @@ export async function getVerifiedRaceRecordBySlug(slug: string): Promise<RaceQue
     const supabase = getSupabaseServerClient();
     const { data, error } = await supabase
       .from("races")
-      .select("*, race_distances(*)")
+      .select("*, race_distances(*), race_sources(*)")
       .eq("verification_status", "verified")
       .eq("slug", slug)
       .maybeSingle();
@@ -56,9 +58,9 @@ export async function getPendingRaceRecords(): Promise<RaceQueryResult<BackendRa
     const supabase = getSupabaseAdminClient();
     const { data, error } = await supabase
       .from("races")
-      .select("*, race_distances(*)")
+      .select("*, race_distances(*), race_sources(*)")
       .eq("verification_status", "pending")
-      .order("last_checked_at", { ascending: false });
+      .order("updated_at", { ascending: false });
 
     if (error) {
       return { data: null, error: error.message };
@@ -77,11 +79,10 @@ export async function updateRaceVerificationStatus(id: string, status: BackendRa
       .from("races")
       .update({
         verification_status: status,
-        last_updated_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)
-      .select("*, race_distances(*)")
+      .select("*, race_distances(*), race_sources(*)")
       .single();
 
     if (error) {
@@ -111,11 +112,10 @@ export async function updateRaceRecord(id: string, patch: Partial<BackendRace>) 
         official_website: patch.officialWebsite,
         registration_url: patch.registrationUrl,
         notes: patch.notes,
-        last_updated_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)
-      .select("*, race_distances(*)")
+      .select("*, race_distances(*), race_sources(*)")
       .single();
 
     if (error) {
@@ -133,6 +133,7 @@ export async function addPendingRaceRecords(races: BackendRace[]) {
     const supabase = getSupabaseAdminClient();
     const raceRows = races.map(toRaceInsert);
     const distanceRows = races.flatMap((race) => race.distances.map((distance) => toDistanceInsert(race.id, distance)));
+    const sourceRows = races.flatMap(toSourceInserts);
 
     const { error: raceError } = await supabase.from("races").upsert(raceRows, { onConflict: "id" });
 
@@ -150,6 +151,16 @@ export async function addPendingRaceRecords(races: BackendRace[]) {
       }
     }
 
+    if (sourceRows.length > 0) {
+      const { error: sourceError } = await supabase
+        .from("race_sources")
+        .upsert(sourceRows, { onConflict: "id" });
+
+      if (sourceError) {
+        return { data: null, error: sourceError.message };
+      }
+    }
+
     return { data: { importedCount: races.length }, error: null };
   } catch (error) {
     return { data: null, error: error instanceof Error ? error.message : "Failed to import races." };
@@ -158,6 +169,26 @@ export async function addPendingRaceRecords(races: BackendRace[]) {
 
 function toBackendRace(row: RaceWithDistances): BackendRace {
   const distances = row.race_distances.map(toBackendDistance);
+  const sources = (row.race_sources ?? []).map((source) => ({
+    id: source.id,
+    sourceUrl: source.source_url,
+    sourceName: source.source_name,
+    sourceType: "manual" as RaceSourceType,
+    lastCheckedAt: source.last_checked_at,
+    confidenceScore: row.data_confidence_score,
+  }));
+  const primarySource = sources[0] ?? {
+    id: `${row.id}-source`,
+    sourceUrl: row.source_url,
+    sourceName: "Primary source",
+    sourceType: "manual" as RaceSourceType,
+    lastCheckedAt: row.updated_at,
+    confidenceScore: row.data_confidence_score,
+  };
+  const elevationGain = distances.reduce(
+    (maxGain, distance) => Math.max(maxGain, distance.elevationGain),
+    0,
+  );
 
   return {
     id: row.id,
@@ -170,25 +201,16 @@ function toBackendRace(row: RaceWithDistances): BackendRace {
     registrationOpenDate: row.registration_open_date ?? "",
     registrationCloseDate: row.registration_close_date ?? "",
     distances,
-    elevationGain: row.elevation_gain,
+    elevationGain,
     organizer: row.organizer,
     officialWebsite: row.official_website,
     registrationUrl: row.registration_url,
     sourceUrl: row.source_url,
-    sourceName: row.source_name,
-    sourceType: row.source_type as RaceSourceType,
-    sources: [
-      {
-        id: `${row.id}-source`,
-        sourceUrl: row.source_url,
-        sourceName: row.source_name,
-        sourceType: row.source_type as RaceSourceType,
-        lastCheckedAt: row.last_checked_at,
-        confidenceScore: row.data_confidence_score,
-      },
-    ],
-    lastCheckedAt: row.last_checked_at,
-    lastUpdatedAt: row.last_updated_at,
+    sourceName: primarySource.sourceName,
+    sourceType: primarySource.sourceType,
+    sources: sources.length > 0 ? sources : [primarySource],
+    lastCheckedAt: primarySource.lastCheckedAt,
+    lastUpdatedAt: row.updated_at,
     verificationStatus: row.verification_status,
     dataConfidenceScore: row.data_confidence_score,
     languages: parseLanguages(row.languages),
@@ -199,12 +221,9 @@ function toBackendRace(row: RaceWithDistances): BackendRace {
 function toBackendDistance(row: DistanceRow): BackendRaceDistance {
   return {
     id: row.id,
-    label: row.label,
+    label: row.category_name,
     distanceKm: row.distance_km,
-    elevationGain: row.elevation_gain,
-    startTime: row.start_time ?? undefined,
-    cutoffHours: row.cutoff_hours ?? undefined,
-    registrationUrl: row.registration_url ?? undefined,
+    elevationGain: row.elevation_gain_m,
   };
 }
 
@@ -219,15 +238,10 @@ function toRaceInsert(race: BackendRace): Database["public"]["Tables"]["races"][
     race_date: race.raceDate,
     registration_open_date: race.registrationOpenDate || null,
     registration_close_date: race.registrationCloseDate || null,
-    elevation_gain: race.elevationGain,
     organizer: race.organizer,
     official_website: race.officialWebsite,
     registration_url: race.registrationUrl,
     source_url: race.sourceUrl,
-    source_name: race.sourceName,
-    source_type: race.sourceType,
-    last_checked_at: race.lastCheckedAt,
-    last_updated_at: race.lastUpdatedAt,
     verification_status: "pending",
     data_confidence_score: race.dataConfidenceScore,
     languages: race.languages,
@@ -242,13 +256,33 @@ function toDistanceInsert(
   return {
     id: distance.id,
     race_id: raceId,
-    label: distance.label,
+    category_name: distance.label,
     distance_km: distance.distanceKm,
-    elevation_gain: distance.elevationGain,
-    start_time: distance.startTime ?? null,
-    cutoff_hours: distance.cutoffHours ?? null,
-    registration_url: distance.registrationUrl ?? null,
+    elevation_gain_m: distance.elevationGain,
   };
+}
+
+function toSourceInserts(race: BackendRace): Database["public"]["Tables"]["race_sources"]["Insert"][] {
+  const sources =
+    race.sources.length > 0
+      ? race.sources
+      : [
+          {
+            id: `${race.id}-source`,
+            sourceUrl: race.sourceUrl,
+            sourceName: race.sourceName,
+            sourceType: race.sourceType,
+            lastCheckedAt: race.lastCheckedAt,
+          },
+        ];
+
+  return sources.map((source) => ({
+    id: source.id,
+    race_id: race.id,
+    source_name: source.sourceName,
+    source_url: source.sourceUrl,
+    last_checked_at: source.lastCheckedAt,
+  }));
 }
 
 function parseLanguages(value: unknown): RaceLanguage[] {

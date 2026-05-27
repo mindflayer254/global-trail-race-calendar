@@ -74,15 +74,36 @@ For Supabase, set:
 
 ## Supabase Setup
 
-1. Run the SQL in `supabase/schema.sql` in the Supabase SQL editor.
-2. Add the environment variables above to `.env.local` and Vercel.
-3. Seed the database:
+This project includes a reusable SQL setup file and a timestamped migration:
+
+- `supabase/schema.sql`
+- `supabase/migrations/202605270001_create_race_schema.sql`
+
+The schema creates:
+
+- `races`
+- `race_distances`
+- `race_sources`
+
+To apply it:
+
+1. Open your Supabase project dashboard.
+2. Go to SQL Editor.
+3. Paste the full contents of `supabase/schema.sql`.
+4. Run the query. The SQL is idempotent and can be run again if needed.
+5. Add the environment variables above to `.env.local` and Vercel.
+6. Seed the database from the current mock race data:
 
 ```bash
 npm run db:seed
 ```
 
-The public site queries only rows where `verification_status = 'verified'`.
+The seed command reads `src/data/races.json` and writes verified records into `races`,
+their distance categories into `race_distances`, and official source records into
+`race_sources`.
+
+The public site queries only rows where `verification_status = 'verified'`. Imported
+records should stay `pending` until reviewed.
 
 ## Vercel Deployment
 
@@ -97,13 +118,13 @@ The public site queries only rows where `verification_status = 'verified'`.
 
 ## Current Data Layer
 
-This MVP uses an in-memory workflow store for demonstration:
+The public calendar and race detail pages read verified races from Supabase through:
 
-- `src/backend/race-store.ts`
-- `src/backend/race-model.ts`
+- `src/lib/supabase/races.ts`
 - `src/lib/races.ts`
 
-For production persistence, replace the in-memory store with a database-backed repository while keeping the same public/admin API boundaries.
+The admin/import workflow writes pending records to Supabase and keeps scraped/imported
+data out of public pages until approved.
 
 ## Important Notes
 

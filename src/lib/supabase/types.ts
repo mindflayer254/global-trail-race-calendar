@@ -10,15 +10,10 @@ export type RaceRow = {
   race_date: string;
   registration_open_date: string | null;
   registration_close_date: string | null;
-  elevation_gain: number;
   organizer: string;
   official_website: string;
   registration_url: string;
   source_url: string;
-  source_name: string;
-  source_type: string;
-  last_checked_at: string;
-  last_updated_at: string;
   verification_status: "pending" | "verified" | "rejected";
   data_confidence_score: number;
   languages: Json;
@@ -35,17 +30,29 @@ export type RaceInsert = Omit<RaceRow, "created_at" | "updated_at"> & {
 export type RaceDistanceRow = {
   id: string;
   race_id: string;
-  label: string;
+  category_name: string;
   distance_km: number;
-  elevation_gain: number;
-  start_time: string | null;
-  cutoff_hours: number | null;
-  registration_url: string | null;
+  elevation_gain_m: number;
   created_at: string;
   updated_at: string;
 };
 
 export type RaceDistanceInsert = Omit<RaceDistanceRow, "created_at" | "updated_at"> & {
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type RaceSourceRow = {
+  id: string;
+  race_id: string;
+  source_name: string;
+  source_url: string;
+  last_checked_at: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type RaceSourceInsert = Omit<RaceSourceRow, "created_at" | "updated_at"> & {
   created_at?: string;
   updated_at?: string;
 };
@@ -66,6 +73,19 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "race_distances_race_id_fkey";
+            columns: ["race_id"];
+            referencedRelation: "races";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      race_sources: {
+        Row: RaceSourceRow;
+        Insert: RaceSourceInsert;
+        Update: Partial<RaceSourceInsert>;
+        Relationships: [
+          {
+            foreignKeyName: "race_sources_race_id_fkey";
             columns: ["race_id"];
             referencedRelation: "races";
             referencedColumns: ["id"];

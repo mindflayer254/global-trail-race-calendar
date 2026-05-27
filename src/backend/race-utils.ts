@@ -25,7 +25,7 @@ export function normalizeCountry(country: string) {
 }
 
 export function normalizeDate(date: string) {
-  return new Date(date).toISOString().slice(0, 10);
+  return toSafeIsoDate(date).slice(0, 10);
 }
 
 export function createDuplicateKey(input: Pick<BackendRace, "raceName" | "country" | "raceDate">) {
@@ -129,4 +129,18 @@ export function getPublishableRaces(races: BackendRace[]) {
 
 function createRaceId(raceName: string, country: string, raceDate: string) {
   return createSlug(raceName, country, raceDate);
+}
+
+function toSafeIsoDate(value: string | Date | null | undefined, fallback = new Date()) {
+  if (!value) {
+    return fallback.toISOString();
+  }
+
+  const date = value instanceof Date ? value : new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return fallback.toISOString();
+  }
+
+  return date.toISOString();
 }
