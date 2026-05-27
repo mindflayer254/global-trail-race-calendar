@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
 
 export function getSupabaseServerClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseUrl = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
@@ -18,7 +18,7 @@ export function getSupabaseServerClient() {
 }
 
 export function getSupabaseAdminClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseUrl = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !serviceRoleKey) {
@@ -31,4 +31,17 @@ export function getSupabaseAdminClient() {
       autoRefreshToken: false,
     },
   });
+}
+
+function normalizeSupabaseUrl(value: string | undefined) {
+  if (!value) {
+    return value;
+  }
+
+  try {
+    const url = new URL(value);
+    return url.origin;
+  } catch {
+    return value.replace(/\/+$/, "");
+  }
 }

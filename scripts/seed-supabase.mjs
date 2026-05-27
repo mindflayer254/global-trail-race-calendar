@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseUrl = normalizeSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !serviceRoleKey) {
@@ -91,3 +91,16 @@ if (sourceError) {
 console.log(
   `Seeded ${races.length} races, ${distances.length} race distances, and ${sources.length} race sources.`,
 );
+
+function normalizeSupabaseUrl(value) {
+  if (!value) {
+    return value;
+  }
+
+  try {
+    const url = new URL(value);
+    return url.origin;
+  } catch {
+    return value.replace(/\/+$/, "");
+  }
+}
