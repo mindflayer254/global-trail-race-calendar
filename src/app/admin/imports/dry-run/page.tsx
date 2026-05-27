@@ -15,10 +15,10 @@ export default function DryRunImporterPage() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
       <div className="max-w-3xl">
-        <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#9b5b2e]">
+        <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#A45A2A]">
           Dry-run importer
         </p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-[#191917]">
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-[#20231E]">
           Preview imports before saving
         </h1>
         <p className="mt-4 text-sm leading-7 text-[#625f57]">

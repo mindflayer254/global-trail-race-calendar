@@ -1,8 +1,8 @@
-import { getVerifiedWorkflowRaces, getWorkflowRaceBySlug } from "@/backend/race-store";
 import type { BackendRace } from "@/backend/race-model";
+import { getVerifiedRaceRecordBySlug, getVerifiedRaceRecords } from "@/lib/supabase/races";
 import type { Race, RaceFilters, RegistrationStatus } from "@/types/race";
 
-export const races = getRaces();
+export const races: Race[] = [];
 
 export const statusLabels: Record<RegistrationStatus, string> = {
   open: "Open",
@@ -11,24 +11,32 @@ export const statusLabels: Record<RegistrationStatus, string> = {
   waitlist: "Waitlist",
 };
 
-export function getRaceBySlug(slug: string) {
-  const race = getWorkflowRaceBySlug(slug);
+export async function getRaceBySlug(slug: string) {
+  const result = await getVerifiedRaceRecordBySlug(slug);
 
-  if (!race || race.verificationStatus !== "verified") {
-    return undefined;
+  if (result.error) {
+    return { race: undefined, error: result.error };
   }
 
-  return toPublicRace(race);
+  return { race: result.data ? toPublicRace(result.data) : undefined, error: null };
 }
 
-export function getFeaturedRaces() {
-  return [...getRaces()]
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    .slice(0, 3);
+export async function getFeaturedRaces() {
+  const result = await getRaces();
+
+  if (result.error || !result.data) {
+    return result;
+  }
+
+  return {
+    data: [...result.data]
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .slice(0, 3),
+    error: null,
+  };
 }
 
-export function getFilterOptions() {
-  const sourceRaces = getRaces();
+export function getFilterOptions(sourceRaces: Race[]) {
   const months = Array.from(
     new Set(
       sourceRaces.map((race) =>
@@ -45,7 +53,7 @@ export function getFilterOptions() {
   return { months, countries, distances };
 }
 
-export function filterRaces(filters: RaceFilters, sourceRaces = getRaces()) {
+export function filterRaces(filters: RaceFilters, sourceRaces: Race[]) {
   return sourceRaces.filter((race) => {
     const raceMonth = new Intl.DateTimeFormat("en", {
       month: "long",
@@ -85,8 +93,14 @@ export function getElevationSummary(race: Race) {
   return `${maxGain.toLocaleString()} m max gain`;
 }
 
-export function getRaces() {
-  return getVerifiedWorkflowRaces().map(toPublicRace);
+export async function getRaces() {
+  const result = await getVerifiedRaceRecords();
+
+  if (result.error || !result.data) {
+    return { data: null, error: result.error };
+  }
+
+  return { data: result.data.map(toPublicRace), error: null };
 }
 
 function toPublicRace(race: BackendRace): Race {

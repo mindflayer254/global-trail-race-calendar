@@ -112,7 +112,7 @@ export function DryRunImporter() {
               <input
                 value={listingUrl}
                 onChange={(event) => setListingUrl(event.target.value)}
-                className="h-12 rounded-[2px] border border-[#c9c4b8] bg-[#f7f4ee] px-3 text-sm outline-none focus:border-[#9b5b2e] focus:ring-2 focus:ring-[#d7b48a]"
+                className="h-12 rounded-[2px] border border-[#D8D0C2] bg-[#f7f4ee] px-3 text-sm outline-none focus:border-[#A45A2A] focus:ring-2 focus:ring-[#d7b48a]"
               />
             </label>
             <label className="grid gap-2 text-sm font-semibold text-[#34332f] sm:max-w-48">
@@ -123,13 +123,13 @@ export function DryRunImporter() {
                 max={50}
                 value={maxRecords}
                 onChange={(event) => setMaxRecords(Number(event.target.value))}
-                className="h-12 rounded-[2px] border border-[#c9c4b8] bg-[#f7f4ee] px-3 text-sm outline-none focus:border-[#9b5b2e] focus:ring-2 focus:ring-[#d7b48a]"
+                className="h-12 rounded-[2px] border border-[#D8D0C2] bg-[#f7f4ee] px-3 text-sm outline-none focus:border-[#A45A2A] focus:ring-2 focus:ring-[#d7b48a]"
               />
             </label>
             <button
               type="submit"
               disabled={isRunning}
-              className="w-full rounded-[2px] bg-[#191917] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#654021] disabled:cursor-not-allowed disabled:opacity-50 sm:w-fit"
+              className="w-full rounded-[2px] bg-[#20231E] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#7c431f] disabled:cursor-not-allowed disabled:opacity-50 sm:w-fit"
             >
               {isRunning ? "Running dry run..." : "Run dry run"}
             </button>
@@ -137,7 +137,7 @@ export function DryRunImporter() {
         </form>
 
         {message ? (
-          <div className="rounded-[2px] border border-[#ded8cc] bg-white p-4 text-sm font-semibold text-[#191917]">
+          <div className="rounded-[2px] border border-[#D8D0C2] bg-white p-4 text-sm font-semibold text-[#20231E]">
             {message}
           </div>
         ) : null}
@@ -146,7 +146,7 @@ export function DryRunImporter() {
           <div className="grid gap-4">
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
               <div>
-                <h2 className="text-2xl font-semibold tracking-tight text-[#191917]">
+                <h2 className="text-2xl font-semibold tracking-tight text-[#20231E]">
                   Preview results
                 </h2>
                 <p className="mt-1 text-sm text-[#625f57]">
@@ -158,7 +158,7 @@ export function DryRunImporter() {
                 type="button"
                 onClick={confirmImport}
                 disabled={isConfirming || preview.imported.length === 0}
-                className="rounded-[2px] bg-[#191917] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#654021] disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-[2px] bg-[#20231E] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#7c431f] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isConfirming ? "Confirming..." : "Confirm import as pending"}
               </button>
@@ -180,7 +180,7 @@ export function DryRunImporter() {
                   ) : null}
                 </div>
 
-                <h3 className="mt-4 text-2xl font-semibold tracking-tight text-[#191917]">
+                <h3 className="mt-4 text-2xl font-semibold tracking-tight text-[#20231E]">
                   {race.raceName}
                 </h3>
                 <p className="mt-2 text-sm text-[#625f57]">
@@ -216,12 +216,12 @@ export function DryRunImporter() {
       </div>
 
       <aside className="premium-card h-fit rounded-[2px] p-5 lg:sticky lg:top-24">
-        <h2 className="text-lg font-semibold tracking-tight text-[#191917]">Dry-run logs</h2>
+        <h2 className="text-lg font-semibold tracking-tight text-[#20231E]">Dry-run logs</h2>
         <div className="mt-4 grid gap-3 text-sm text-[#625f57]">
           {preview?.logs.length ? (
             preview.logs.map((log) => (
               <div key={`${log.timestamp}-${log.message}`} className="border-b border-[#eee9df] pb-3 last:border-0">
-                <p className="font-semibold text-[#191917]">{log.level.toUpperCase()}</p>
+                <p className="font-semibold text-[#20231E]">{log.level.toUpperCase()}</p>
                 <p className="mt-1">{log.message}</p>
                 {log.error ? <p className="mt-1 text-[#8b3428]">{log.error}</p> : null}
               </div>
@@ -239,7 +239,7 @@ function PreviewItem({ label, value, isLink }: { label: string; value: string; i
   return (
     <div className="min-w-0 rounded-[2px] border border-[#eee9df] bg-[#fffdfa] p-3">
       <dt className="text-xs font-bold uppercase tracking-[0.16em] text-[#7a756b]">{label}</dt>
-      <dd className="mt-1 truncate font-semibold text-[#191917]">
+      <dd className="mt-1 truncate font-semibold text-[#20231E]">
         {isLink ? (
           <a href={value} target="_blank" rel="noreferrer" className="underline-offset-4 hover:underline">
             {value}
@@ -254,7 +254,7 @@ function PreviewItem({ label, value, isLink }: { label: string; value: string; i
 
 function FlagPanel({ title, items, emptyLabel }: { title: string; items: string[]; emptyLabel: string }) {
   return (
-    <div className="rounded-[2px] border border-[#ded8cc] bg-white p-3">
+    <div className="rounded-[2px] border border-[#D8D0C2] bg-white p-3">
       <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#7a756b]">{title}</p>
       {items.length > 0 ? (
         <div className="mt-2 flex flex-wrap gap-2">

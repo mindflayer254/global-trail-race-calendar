@@ -33,7 +33,7 @@ export function RaceCalendar({ races, filterOptions }: RaceCalendarProps) {
 
   return (
     <div className="mt-10">
-      <div className="premium-card grid gap-4 rounded-[2px] p-4 sm:p-5 md:grid-cols-4">
+      <div className="premium-card grid gap-4 rounded-[4px] p-4 sm:p-5 md:grid-cols-2 lg:grid-cols-4 lg:gap-5">
         <FilterSelect
           label="Month"
           value={filters.month}
@@ -75,22 +75,22 @@ export function RaceCalendar({ races, filterOptions }: RaceCalendarProps) {
         />
       </div>
 
-      <div className="mt-6 flex flex-col gap-4 text-sm text-[#66635c] sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-6 flex flex-col gap-4 text-sm text-[#6B675F] sm:flex-row sm:items-center sm:justify-between">
         <p>
-          Showing <span className="font-semibold text-[#191917]">{filteredRaces.length}</span> of{" "}
+          Showing <span className="font-semibold text-[#20231E]">{filteredRaces.length}</span> of{" "}
           {races.length} races
         </p>
         <button
           type="button"
           onClick={() => setFilters(initialFilters)}
-          className="soft-hover w-full rounded-[2px] border border-[#c9c4b8] bg-white px-3 py-2.5 font-semibold text-[#191917] hover:border-[#9b5b2e] sm:w-auto"
+          className="soft-hover w-full rounded-[3px] border border-[#D8D0C2] bg-white px-3 py-2.5 font-semibold text-[#20231E] hover:border-[#A45A2A] sm:w-auto"
         >
           Reset filters
         </button>
       </div>
 
       {filteredRaces.length > 0 ? (
-        <div className="mt-7 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-7 grid gap-5 md:grid-cols-2 xl:grid-cols-3 xl:gap-6">
           {filteredRaces.map((race) => (
             <RaceCard key={race.slug} race={race} />
           ))}
@@ -116,12 +116,12 @@ type FilterSelectProps = {
 
 function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
   return (
-    <label className="grid gap-2 text-sm font-semibold text-[#34332f]">
+    <label className="grid gap-2 text-sm font-semibold text-[#20231E]">
       {label}
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-12 rounded-[2px] border border-[#c9c4b8] bg-[#f7f4ee] px-3 text-sm font-medium text-[#191917] outline-none transition hover:border-[#9b5b2e] focus:border-[#9b5b2e] focus:ring-2 focus:ring-[#d7b48a]"
+        className="field-surface h-12 rounded-[3px] px-3 text-sm font-medium text-[#20231E] outline-none transition"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

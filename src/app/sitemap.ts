@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getRaces } from "@/lib/races";
 import { siteUrl } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const publicRoutes: MetadataRoute.Sitemap = [
     {
@@ -25,7 +25,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const raceRoutes = getRaces().map((race) => ({
+  const racesResult = await getRaces();
+  const raceRoutes = (racesResult.data ?? []).map((race) => ({
     url: `${siteUrl}/races/${race.slug}`,
     lastModified: new Date(race.lastUpdated),
     changeFrequency: "weekly" as const,

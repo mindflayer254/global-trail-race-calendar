@@ -1,9 +1,5 @@
 import { NextResponse } from "next/server";
-import {
-  mergeWorkflowDuplicates,
-  updateWorkflowRace,
-  updateWorkflowRaceStatus,
-} from "@/backend/race-store";
+import { updateRaceRecord, updateRaceVerificationStatus } from "@/lib/supabase/races";
 import type { BackendRace, VerificationStatus } from "@/backend/race-model";
 
 export const dynamic = "force-dynamic";
@@ -31,36 +27,33 @@ export async function PATCH(request: Request, { params }: RouteParams) {
   }
 
   if (body.action === "merge") {
-    const race = mergeWorkflowDuplicates(id);
-
-    if (!race) {
-      return NextResponse.json({ error: "Race not found" }, { status: 404 });
-    }
-
-    return NextResponse.json({ race });
+    return NextResponse.json(
+      { error: "Merge is not implemented for Supabase persistence yet. Edit or reject duplicates manually." },
+      { status: 501 },
+    );
   }
 
   if (body.action === "edit") {
-    const race = updateWorkflowRace(id, sanitizePatch(body.patch));
+    const result = await updateRaceRecord(id, sanitizePatch(body.patch));
 
-    if (!race) {
-      return NextResponse.json({ error: "Race not found" }, { status: 404 });
+    if (result.error) {
+      return NextResponse.json({ error: result.error }, { status: 500 });
     }
 
-    return NextResponse.json({ race });
+    return NextResponse.json({ race: result.data });
   }
 
   return NextResponse.json({ error: "Unsupported action" }, { status: 400 });
 }
 
-function updateStatus(id: string, status: VerificationStatus) {
-  const race = updateWorkflowRaceStatus(id, status);
+async function updateStatus(id: string, status: VerificationStatus) {
+  const result = await updateRaceVerificationStatus(id, status);
 
-  if (!race) {
-    return NextResponse.json({ error: "Race not found" }, { status: 404 });
+  if (result.error) {
+    return NextResponse.json({ error: result.error }, { status: 500 });
   }
 
-  return NextResponse.json({ race });
+  return NextResponse.json({ race: result.data });
 }
 
 function sanitizePatch(patch: Partial<BackendRace>) {

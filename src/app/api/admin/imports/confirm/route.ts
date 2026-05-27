@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { addPendingImportedRaces } from "@/backend/race-store";
+import { addPendingRaceRecords } from "@/lib/supabase/races";
 import type { BackendRace } from "@/backend/race-model";
 
 export const dynamic = "force-dynamic";
@@ -15,12 +15,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Expected races array." }, { status: 400 });
   }
 
-  const result = addPendingImportedRaces(body.races);
+  const result = await addPendingRaceRecords(body.races);
+
+  if (result.error || !result.data) {
+    return NextResponse.json({ error: result.error ?? "Import failed." }, { status: 500 });
+  }
 
   return NextResponse.json({
-    importedCount: result.imported.length,
-    skippedCount: result.skipped.length,
-    imported: result.imported,
-    skipped: result.skipped,
+    importedCount: result.data.importedCount,
+    skippedCount: 0,
+    imported: body.races,
+    skipped: [],
   });
 }

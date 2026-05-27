@@ -77,9 +77,9 @@ export function SubmitRaceForm() {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="premium-card mt-10 rounded-[2px] p-5 sm:p-7"
+      className="premium-card mt-10 rounded-[4px] p-5 sm:p-7 lg:p-8"
     >
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
         <TextField
           label="Race name"
           value={form.raceName}
@@ -118,13 +118,13 @@ export function SubmitRaceForm() {
           required
           onChange={(value) => updateField("registrationUrl", value)}
         />
-        <label className="grid gap-2 text-sm font-semibold text-[#34332f] sm:col-span-2">
+        <label className="grid gap-2 text-sm font-semibold text-[#20231E] sm:col-span-2">
           Notes
           <textarea
             value={form.notes}
             onChange={(event) => updateField("notes", event.target.value)}
             rows={5}
-            className="min-h-36 resize-y rounded-[2px] border border-[#c9c4b8] bg-[#f7f4ee] px-3 py-3 text-sm font-medium text-[#191917] outline-none transition hover:border-[#9b5b2e] focus:border-[#9b5b2e] focus:ring-2 focus:ring-[#d7b48a]"
+            className="field-surface min-h-40 resize-y rounded-[3px] px-3.5 py-3 text-sm font-medium text-[#20231E] outline-none transition"
             placeholder="Distance categories, elevation, source links, language notes, or organizer contacts."
           />
         </label>
@@ -136,11 +136,11 @@ export function SubmitRaceForm() {
             Thanks. The submission passed local validation.
           </p>
         ) : (
-          <p className="text-sm text-[#66635c]">Required fields are marked with an asterisk.</p>
+          <p className="text-sm text-[#6B675F]">Required fields are marked with an asterisk.</p>
         )}
         <button
           type="submit"
-          className="soft-hover rounded-[2px] bg-[#191917] px-5 py-3 text-sm font-semibold text-white hover:bg-[#654021]"
+          className="soft-hover rounded-[3px] bg-[#1E241D] px-5 py-3 text-sm font-semibold text-white hover:bg-[#2a3328] sm:min-w-40"
         >
           Submit for review
         </button>
@@ -160,17 +160,17 @@ type TextFieldProps = {
 
 function TextField({ label, value, error, placeholder, required, onChange }: TextFieldProps) {
   return (
-    <label className="grid gap-2 text-sm font-semibold text-[#34332f]">
+    <label className="grid gap-2 text-sm font-semibold text-[#20231E]">
       <span>
         {label}
-        {required ? <span className="text-[#9a5b2f]"> *</span> : null}
+        {required ? <span className="text-[#A45A2A]"> *</span> : null}
       </span>
       <input
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         aria-invalid={Boolean(error)}
-        className="h-12 rounded-[2px] border border-[#c9c4b8] bg-[#f7f4ee] px-3 text-sm font-medium text-[#191917] outline-none transition hover:border-[#9b5b2e] focus:border-[#9b5b2e] focus:ring-2 focus:ring-[#d7b48a]"
+        className="field-surface h-12 rounded-[3px] px-3.5 text-sm font-medium text-[#20231E] outline-none transition"
       />
       {error ? <span className="text-xs font-semibold text-[#9a342f]">{error}</span> : null}
     </label>

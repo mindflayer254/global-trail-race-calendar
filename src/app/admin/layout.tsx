@@ -7,7 +7,7 @@ export default function AdminLayout({
 }>) {
   return (
     <div className="min-h-screen bg-[#f7f4ee]">
-      <div className="border-b border-[#ded8cc] bg-[#191917] text-white">
+      <div className="border-b border-[#D8D0C2] bg-[#20231E] text-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#d7b48a]">
@@ -17,7 +17,7 @@ export default function AdminLayout({
           </div>
           <Link
             href="/"
-            className="rounded-[2px] border border-white/20 px-3 py-2 text-sm font-semibold transition hover:bg-white hover:text-[#191917]"
+            className="rounded-[2px] border border-white/20 px-3 py-2 text-sm font-semibold transition hover:bg-white hover:text-[#20231E]"
           >
             Public site
           </Link>

@@ -66,6 +66,24 @@ cp .env.example .env.local
 
 Set `NEXT_PUBLIC_SITE_URL` to the production Vercel URL or custom domain.
 
+For Supabase, set:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+## Supabase Setup
+
+1. Run the SQL in `supabase/schema.sql` in the Supabase SQL editor.
+2. Add the environment variables above to `.env.local` and Vercel.
+3. Seed the database:
+
+```bash
+npm run db:seed
+```
+
+The public site queries only rows where `verification_status = 'verified'`.
+
 ## Vercel Deployment
 
 1. Push the repository to GitHub, GitLab, or Bitbucket.

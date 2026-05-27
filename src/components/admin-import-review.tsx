@@ -126,7 +126,7 @@ export function AdminImportReview({ initialRaces }: AdminImportReviewProps) {
       <div className="grid gap-4">
         {pendingRaces.length === 0 ? (
           <div className="premium-card rounded-[2px] p-8 text-center">
-            <h2 className="text-2xl font-semibold tracking-tight text-[#191917]">No pending imports</h2>
+            <h2 className="text-2xl font-semibold tracking-tight text-[#20231E]">No pending imports</h2>
             <p className="mt-3 text-sm text-[#625f57]">Approved and rejected records are no longer in this queue.</p>
           </div>
         ) : (
@@ -164,7 +164,7 @@ export function AdminImportReview({ initialRaces }: AdminImportReviewProps) {
                       type="button"
                       onClick={() => updateStatus(race.id, "verified")}
                       disabled={busyRaceId === race.id}
-                      className="rounded-[2px] bg-[#191917] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#654021]"
+                      className="rounded-[2px] bg-[#20231E] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#7c431f]"
                     >
                       Approve
                     </button>
@@ -172,7 +172,7 @@ export function AdminImportReview({ initialRaces }: AdminImportReviewProps) {
                       type="button"
                       onClick={() => setEditingId(race.id)}
                       disabled={busyRaceId === race.id}
-                      className="rounded-[2px] border border-[#c9c4b8] bg-white px-4 py-2.5 text-sm font-semibold text-[#191917] transition hover:border-[#9b5b2e]"
+                      className="rounded-[2px] border border-[#D8D0C2] bg-white px-4 py-2.5 text-sm font-semibold text-[#20231E] transition hover:border-[#A45A2A]"
                     >
                       Edit
                     </button>
@@ -180,7 +180,7 @@ export function AdminImportReview({ initialRaces }: AdminImportReviewProps) {
                       type="button"
                       onClick={() => mergeDuplicates(race)}
                       disabled={!isDuplicate || busyRaceId === race.id}
-                      className="rounded-[2px] border border-[#c9c4b8] bg-white px-4 py-2.5 text-sm font-semibold text-[#191917] transition hover:border-[#9b5b2e] disabled:cursor-not-allowed disabled:opacity-45"
+                      className="rounded-[2px] border border-[#D8D0C2] bg-white px-4 py-2.5 text-sm font-semibold text-[#20231E] transition hover:border-[#A45A2A] disabled:cursor-not-allowed disabled:opacity-45"
                     >
                       Merge duplicates
                     </button>
@@ -201,7 +201,7 @@ export function AdminImportReview({ initialRaces }: AdminImportReviewProps) {
       </div>
 
       <aside className="premium-card h-fit rounded-[2px] p-5 lg:sticky lg:top-24">
-        <h2 className="text-lg font-semibold tracking-tight text-[#191917]">Review log</h2>
+        <h2 className="text-lg font-semibold tracking-tight text-[#20231E]">Review log</h2>
         <div className="mt-4 grid gap-3 text-sm text-[#625f57]">
           {activity.length > 0 ? (
             activity.slice(0, 8).map((item) => (
@@ -227,7 +227,7 @@ function RaceReviewSummary({
 }) {
   return (
     <div className="mt-4">
-      <h2 className="text-2xl font-semibold tracking-tight text-[#191917]">{race.raceName}</h2>
+      <h2 className="text-2xl font-semibold tracking-tight text-[#20231E]">{race.raceName}</h2>
       <p className="mt-2 text-sm leading-6 text-[#625f57]">
         {race.city}, {race.country} / {race.region} / {race.raceDate}
       </p>
@@ -243,7 +243,7 @@ function RaceReviewSummary({
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#7a756b]">Distances</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {race.distances.map((distance) => (
-            <span key={distance.id} className="rounded-[2px] border border-[#ded8cc] bg-white px-2.5 py-1 text-xs font-semibold text-[#191917]">
+            <span key={distance.id} className="rounded-[2px] border border-[#D8D0C2] bg-white px-2.5 py-1 text-xs font-semibold text-[#20231E]">
               {distance.label} / {distance.distanceKm} km / {distance.elevationGain.toLocaleString()} m
             </span>
           ))}
@@ -270,7 +270,7 @@ function ReviewItem({ label, value, isLink }: { label: string; value: string; is
   return (
     <div className="min-w-0 rounded-[2px] border border-[#eee9df] bg-[#fffdfa] p-3">
       <dt className="text-xs font-bold uppercase tracking-[0.16em] text-[#7a756b]">{label}</dt>
-      <dd className="mt-1 truncate font-semibold text-[#191917]">
+      <dd className="mt-1 truncate font-semibold text-[#20231E]">
         {isLink ? (
           <a href={value} target="_blank" rel="noreferrer" className="underline-offset-4 hover:underline">
             {value}
@@ -319,7 +319,7 @@ function EditRaceForm({
             <input
               value={value}
               onChange={(event) => updateField(field as keyof EditState, event.target.value)}
-              className="h-11 rounded-[2px] border border-[#c9c4b8] bg-[#f7f4ee] px-3 text-sm outline-none focus:border-[#9b5b2e] focus:ring-2 focus:ring-[#d7b48a]"
+              className="h-11 rounded-[2px] border border-[#D8D0C2] bg-[#f7f4ee] px-3 text-sm outline-none focus:border-[#A45A2A] focus:ring-2 focus:ring-[#d7b48a]"
             />
           </label>
         ))}
@@ -328,14 +328,14 @@ function EditRaceForm({
         <button
           type="button"
           onClick={() => onSave(race.id, edit)}
-          className="rounded-[2px] bg-[#191917] px-4 py-2 text-sm font-semibold text-white"
+          className="rounded-[2px] bg-[#20231E] px-4 py-2 text-sm font-semibold text-white"
         >
           Save changes
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-[2px] border border-[#c9c4b8] bg-white px-4 py-2 text-sm font-semibold text-[#191917]"
+          className="rounded-[2px] border border-[#D8D0C2] bg-white px-4 py-2 text-sm font-semibold text-[#20231E]"
         >
           Cancel
         </button>

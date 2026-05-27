@@ -57,22 +57,22 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <div className="min-h-screen">
-          <header className="sticky top-0 z-40 border-b border-[#ded8cc]/80 bg-[#fbfaf7]/88 backdrop-blur-xl">
-            <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
-              <Link href="/" className="flex min-w-0 items-center gap-3 font-semibold tracking-wide">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[2px] bg-[#191917] text-sm font-bold text-white shadow-sm">
-                  CT
+          <header className="sticky top-0 z-40 border-b border-[#D8D0C2]/75 bg-[#fbfaf7]/90 backdrop-blur-xl">
+            <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
+              <Link href="/" className="group flex min-w-0 items-center gap-3 font-semibold tracking-wide">
+                <span className="logo-mark grid h-9 w-9 shrink-0 place-items-center rounded-[3px] text-[0.72rem] font-black text-[#f5ead8] transition group-hover:brightness-110">
+                  GTF
                 </span>
-                <span className="truncate text-xs uppercase tracking-[0.16em] sm:text-sm">
+                <span className="truncate text-xs uppercase tracking-[0.2em] text-[#20231E] sm:text-sm">
                   Global Trail Finder
                 </span>
               </Link>
-              <div className="flex shrink-0 items-center gap-1 text-xs font-semibold text-[#4a4740] sm:gap-2 sm:text-sm">
+              <div className="flex shrink-0 items-center gap-1 rounded-[4px] border border-[#D8D0C2]/80 bg-white/48 p-1 text-xs font-semibold text-[#58544d] shadow-sm sm:gap-1.5 sm:text-sm">
                 {navItems.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="rounded-[2px] px-2.5 py-2 transition hover:bg-white hover:text-[#191917] hover:shadow-sm sm:px-3"
+                    className="rounded-[3px] px-2.5 py-2 transition hover:bg-white hover:text-[#20231E] hover:shadow-sm sm:px-3.5"
                   >
                     {item.label}
                   </Link>
@@ -81,10 +81,10 @@ export default function RootLayout({
             </nav>
           </header>
           <main>{children}</main>
-          <footer className="border-t border-[#2d2b26] bg-[#191917] text-white">
-            <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-[1.3fr_1fr] lg:px-8">
+          <footer className="border-t border-[#30362c] bg-[#1E241D] text-white">
+            <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.3fr_1fr] lg:px-8">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#d7b48a]">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#d8b48a]">
                   Public race discovery
                 </p>
                 <p className="mt-4 max-w-xl text-sm leading-7 text-[#d6d2c7]">
@@ -96,13 +96,13 @@ export default function RootLayout({
               <div className="flex flex-wrap items-start gap-3 md:justify-end">
                 <Link
                   href="/races"
-                  className="rounded-[2px] border border-[#d7b48a]/50 px-4 py-2.5 text-sm font-semibold text-[#f4e7d2] transition hover:bg-[#d7b48a] hover:text-[#191917]"
+                  className="soft-hover rounded-[3px] border border-[#d8b48a]/50 px-4 py-2.5 text-sm font-semibold text-[#f4e7d2] transition hover:bg-[#d8b48a] hover:text-[#1E241D]"
                 >
                   Explore races
                 </Link>
                 <Link
                   href="/submit"
-                  className="rounded-[2px] border border-white/20 px-4 py-2.5 text-sm font-semibold transition hover:bg-white hover:text-[#191917]"
+                  className="soft-hover rounded-[3px] border border-white/20 px-4 py-2.5 text-sm font-semibold transition hover:bg-white hover:text-[#1E241D]"
                 >
                   Submit a race
                 </Link>
